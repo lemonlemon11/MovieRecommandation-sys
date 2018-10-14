@@ -1,6 +1,7 @@
 import os
 from urllib.request import urlretrieve
 from tqdm import tqdm
+import zipfile
 
 
 def dowload_data():
@@ -33,4 +34,23 @@ class DLProgress(tqdm):
 		self.last_block = block_num
 
 
+def extract_data():
+	data_name = 'ml-1m'
+	data_path = 'movielens/ml-1m.zip'
+	extract_path = 'movielens'
+	if not os.path.exists(extract_path):
+		os.makedirs(extract_path)
+		unzip(data_name, data_path, extract_path)
+	else:
+		unzip(data_name, data_path, extract_path)
+	print('extraction done')
+
+
+def unzip(data_name, from_path, to_path):
+	print(f'Extracting {data_name}...')
+	with zipfile.ZipFile(from_path) as zf:
+		zf.extractall(to_path)
+
+
 dowload_data()
+extract_data()
