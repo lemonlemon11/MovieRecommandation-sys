@@ -46,7 +46,13 @@ expires_in = 600
 auth = AuthenticationToken(SECRET_KEY, expires_in)
 
 app = Flask(__name__)
-api = Api(app, security='API-KEY',
+api = Api(app, authorizations={
+                'API-KEY': {
+                    'type': 'apiKey',
+                    'in': 'header',
+                    'name': 'AUTH-TOKEN'
+                }
+            },security='API-KEY',
           default="Books",  # Default namespace
           title="Book Dataset",  # Documentation Title
           description="This is just a simple example to show how publish data as a service.")  # Documentation Description
