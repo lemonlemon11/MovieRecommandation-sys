@@ -102,8 +102,6 @@ class Token(Resource):
         username = args.get('username')
         global test
         test = username
-        # list.append(username)
-        # password = args.get('password')
 
         if username in list:
 
