@@ -46,13 +46,7 @@ expires_in = 600
 auth = AuthenticationToken(SECRET_KEY, expires_in)
 
 app = Flask(__name__)
-api = Api(app, authorizations={
-                'API-KEY': {
-                    'type': 'apiKey',
-                    'in': 'header',
-                    'name': 'AUTH-TOKEN'
-                }
-            },security='API-KEY',
+api = Api(app,security='API-KEY',
           default="Books",  # Default namespace
           title="Book Dataset",  # Documentation Title
           description="This is just a simple example to show how publish data as a service.")  # Documentation Description
@@ -61,16 +55,12 @@ api = Api(app, authorizations={
 def requires_auth(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        # token = request.headers.get('AUTH-TOKEN')
-        # print(token)
-        # request.headers.insert("AUTH_TOKEN",)
         token = test
 
-        print("aaa", token)
         if not token:
             abort(401, 'Authentication token is missing')
         if token not in l:
-            abort(401, 'Authentication miss matching')
+            abort(401, 'Authentication failed')
 
         try:
             user = auth.validate_token(l[token])
@@ -110,9 +100,7 @@ class Token(Resource):
         test = username
 
         if username in list:
-
-            a = auth.generate_token(username)
-            l[username] = a
+            l[username]=auth.generate_token(username)
             print(l)
             print(request.headers)
             return {"token": auth.generate_token(username)},username
