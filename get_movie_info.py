@@ -21,42 +21,57 @@ class movie:
     def get_detail(self, link):
         url = 'https://www.imdb.com' + link
         result = dict()
-
         res = requests.get((url)).text
         page = BeautifulSoup(res, 'lxml')
 
         poster = page.find('div', class_='poster')
-        poster_url = poster.a.img['src']
+        try:
+            poster_url = poster.a.img['src']
+        except:
+            poster_url = None
 
-        summary = page.find('div', class_='summary_text').text.strip()
+        try:
+            summary = page.find('div', class_='summary_text').text.strip()
+        except:
+            summary = None
 
-        rate = page.find('div', class_='ratingValue').strong['title']
+        try:
+            rate = page.find('div', class_='ratingValue').strong['title']
+        except:
+            rate = None
         # print('rate: ',rate)
-
-        people = page.find_all('div', class_='credit_summary_item')
+        try:
+            people = page.find_all('div', class_='credit_summary_item')
+        except:
+            people = None
         # print(people)
-
-        info = page.find('div', class_='subtext')
+        try:
+            info = page.find('div', class_='subtext')
+            time = info.time.text.strip()
+        except:
+            time = None
         stars = []
         director = ''
 
         # director = page.find('a', href = re.compile("/name[...]dr"))
         # print(director)
-
-        for e in people:
-            # print(type(e))
-            # print(e)
-            # print()
-            if e.h4.text == 'Director:':
-                director = e.a.text
-            elif e.h4.text == 'Stars:':
-                for i in e.find_all('a'):
-                    stars.append(i.text)
-        stars = stars[0:-1]
+        try:
+            for e in people:
+                # print(type(e))
+                # print(e)
+                # print()
+                if e.h4.text == 'Director:':
+                    director = e.a.text
+                elif e.h4.text == 'Stars:':
+                    for i in e.find_all('a'):
+                        stars.append(i.text)
+            stars = stars[0:-1]
+        except:
+            stars = None
+            director = None
         # print('directors: ', director)
         # print('stars: ', stars)
 
-        time = info.time.text.strip()
         # genre = info.a[0:-1]
         # release_date = info.a[-1]
 
@@ -69,6 +84,7 @@ class movie:
         result['time'] = time
         result['director'] = director
         result['stars'] = stars
+        result['rate'] = rate
 
         return result
 
