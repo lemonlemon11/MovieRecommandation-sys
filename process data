@@ -1,0 +1,13 @@
+
+def process_user_data():
+	print('processing users data....')
+	# read users data
+	users_title = ['UserID', 'Gender', 'Age', 'OccupationID', 'Zip-code']
+	users = pd.read_table('movielens/ml-1m/users.dat', sep='::', header=None, names=users_title, engine='python')
+	users = users.filter(regex='UserID|Gender|Age|OccupationID')
+	users_original = users.values
+	gender_map = {'F': 0, 'M': 1}
+	users['Gender'] = users['Gender'].map(gender_map)
+	age_map = {val: ii for ii, val in enumerate(sorted(list(set(users['Age']))))}
+	users['Age'] = users['Age'].map(age_map)
+	return users, users_original
