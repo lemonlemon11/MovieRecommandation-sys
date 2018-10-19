@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="http://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css"  media="all">
+    <link rel="stylesheet" href="../static/frame/layui/css/layui.css">
+    <link rel="stylesheet" href="../static/frame/static/css/style.css">
+    <script type="text/javascript" src="../static/js/jquery.js"></script>
+    <script type="text/javascript" src="http://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+    <script src="../static/frame/layui/layui.js"></script>
+</head>
+<body class="body">
+<table id="example" class="display" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>movid id</th>
+                <th>movid name</th>
+                <th>type</th>
+                <th>summary</th>
+                <th>stars</th>
+                <th>rate</th>
+                <th>director</th>
+                <th>time</th>
+                <th>pic</th>
+                <th>others</th>
+
+            </tr>
+        </thead>
+</table>
+
+
+<script type="text/javascript">
+
+
+    $(document).ready(function() {
+
+        $('#example').DataTable( {
+            "ajax": "/movie_recommendation/other_favorite?query={{ movieid }}",
+            "columns": [
+
+                { "data": "id" },
+                { "data": "movie_name" },
+                { "data": "type" },
+                { "data": "summary" },
+                { "data": "stars" },
+                { "data": "rate" },
+                { "data": "director" },
+                { "data": "time" },
+
+            ],
+            "columnDefs": [
+                {
+                  "targets": [8],
+                  "data": "img_url",
+                  "render": function(data, type, full) {
+                      if(data == null){
+                          return
+                      }else{
+                          return "<img src="+data+" width=50 height=80>";
+                      }
+                  }
+                },
+
+                {
+                    "targets" : [9],//操作按钮目标列
+                    "data" : null,
+                    "render" : function(data, type,row) {
+                    var id = '"' + row.id + '"';
+                    var html = "<a href='/people-list.html' target='_blank' class='layui-btn' id='btn' onclick='get_people()'> view</a>"
+                    return html;
+                    }
+                }
+              ]
+        } );
+    } );
+</script>
+</body>
+</html>
