@@ -55,3 +55,41 @@ def process_movie_data():
 
 	movies['Genres'] = movies['Genres'].map(genres_map)
 	return movies, movies_original, genres2int, title_set, title_length, title_to_id_df
+
+
+def save_data():
+	users, users_original = process_user_data()
+	movies, movies_original, genres2int, title_set, title_length, title_to_id_df = process_movie_data()
+	ratings = process_rating_data()
+	data = pd.merge(pd.merge(ratings, users), movies)
+
+	target_fields = ['ratings']
+	feature_pd, tragets_pd = data.drop(target_fields, axis=1), data[target_fields]
+
+	features = feature_pd.values
+	targets = tragets_pd.values
+
+	data_path = './data'
+	if not os.path.exists(data_path):
+		os.makedirs(data_path)
+	with open(data_path + '/features.p', 'wb') as file:
+		pickle.dump(features, file)
+	with open(data_path + '/targets.p', 'wb') as file:
+		pickle.dump(targets, file)
+	params = (title_length, title_set, genres2int, features, targets, ratings, users, movies, data, movies_original, users_original)
+	with open(data_path + '/params.p', 'wb') as file:
+		pickle.dump(params, file)
+
+	title_vocb_num = len(title_set) #5216
+	genres_num = len(genres2int) #19
+	movie_id_num = max(movies['MovieID']) + 1 #3952
+	argument = (title_vocb_num, genres_num, movie_id_num)
+	with open(data_path + '/argument.p', 'wb') as file:
+		pickle.dump(argument, file)
+
+	title_to_id_df.to_csv(data_path + '/title_to_id.csv', sep=',', encoding='utf-8', index=False)
+
+	print('Data saved.')
+
+
+save_data()
